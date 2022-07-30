@@ -1,28 +1,7 @@
 import random
+from tkinter import scrolledtext
 
-table = [dealer, *player]
-
-playerhand = []
-dealerhand = []
-
-runningcount = 0
-truecount = runningcount / (Cards in shoe / 52)
-playerscore = 0
-dealerscore = 0
-
-#deck - 52 cards - 6 decks - 312 cards in shoe
-class Deck:
-    shoe = []
-    for suit in suits:
-        for face in faces:
-            shoe.append(Card(suits_symbols[suit], face, values[face]))
-
-
-    def __init__(self, cards):
-        self.cards = cards
-
-
-class Card:
+class Cards:
     suits = ['Spades', 'Diamonds', 'Clubs', 'Hearts']
     suits_symbols = {'Spades':'\u2664', 'Diamonds':'\u2661', 'Clubs':'\u2667', 'Hearts':'\u2662'}
     faces = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King']
@@ -35,6 +14,7 @@ class Card:
         self.suits = suits
         self.cardcount = cardcount
 
+#deck - 52 cards - 6 decks - 312 cards in shoe
 
 #dictionary tuples {card id: value, suit}
 #===========
@@ -46,17 +26,41 @@ class Card:
 #==========
 #determine player count and hand count, add to active list and $bets$
 #deal cards (1 each until) 2 per hand and 2 for dealer- random draw from deck list/dictionary
-def gamestart():
-    input("Welcome to the table folks. How many players today?")
-    while player in game:
-        for each player and dealer in table:
-            random.choice(shoe) * 2
-        if 'Ace' in dealer[0] and (self.playerscore) == 21:
-            input("Would you like even money? y/n ")
-                if "y":
-                    (self.player)stack = ((self.player)bet * 1.5) + (self.player)stack
-                else:    
+#hand totals
+def gameblackjack():
+    shoe = []
+    playerhand = []
+    dealerhand = []
+    runningcount = 0
+    truecount = runningcount / (Cards in shoe / 52)
+    playerscore = 0
+    dealerscore = 0
 
+#dealing opening hands
+    for suit in suits: #the Deck/Shoe
+        for face in faces:
+            shoe.append(Cards(suits_symbols[suit], face, values[face]))
+    
+    input("Welcome to the table folks. How many players today?")
+    #create number of player instances -max6- from input value
+    while len(playerhand) < 2:
+        #dealer hand
+        draw = random.choice(shoe) #card from shoe
+        playerhand.append(draw) #into hand
+        deck.remove(draw) #out of shoe
+
+        playerscore += draw.value
+        #multiple aces in hand
+        #if the [count of Ace] in playerhand is > 1, then playerscore == 10 + [count of Ace] + other card values
+
+        print hand and score
+
+        #dealer hand
+        draw = random.choice(shoe) #card from shoe
+        dealerhand.append(draw) #into hand
+        deck.remove(draw)
+
+        print(Dealer shows [dealerhand][0])
         
 
 
