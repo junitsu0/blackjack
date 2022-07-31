@@ -1,18 +1,177 @@
 import random
-from tkinter import scrolledtext
+
+suits = ['Spades', 'Diamonds', 'Clubs', 'Hearts']
+symbols = {'Spades':'\u2664', 'Diamonds':'\u2661', 'Clubs':'\u2667', 'Hearts':'\u2662'}
+ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King']
+values = {'2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'Jack':10, 'Queen':10, 'King':10, 'Ace':11}
+cardcounts = {'2':+1, '3':+1, '4':+1, '5':+1, '6':+1, '7':0, '8':0, '9':0, '10':-1, 'Jack':-1, 'Queen':-1, 'King':-1, 'Ace':-1}
+
+shoe = []
+hand = []
+score = 0
+
+def int_input(prompt):#check for invalid string inputs
+    while True:
+        try:
+            edgecase = int(input(prompt))
+            return edgecase
+        except ValueError as x:
+            print("Please enter a valid number.")
 
 class Cards:
-    suits = ['Spades', 'Diamonds', 'Clubs', 'Hearts']
-    suits_symbols = {'Spades':'\u2664', 'Diamonds':'\u2661', 'Clubs':'\u2667', 'Hearts':'\u2662'}
-    faces = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King']
-    values = {'2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'Jack':10, 'Queen':10, 'King':10, 'Ace':11}
-    cardcount = {'2':+1, '3':+1, '4':+1, '5':+1, '6':+1, '7':0, '8':0, '9':0, '10':-1, 'Jack':-1, 'Queen':-1, 'King':-1, 'Ace':-1}
-
-    def __init__(self, faces, values, suits, cardcount):
-        self.faces = faces
+    def __init__(self, symbols, ranks, values, suits, cardcounts):
+        self.ranks = ranks
+        self.symbols = symbols
         self.values = values
         self.suits = suits
-        self.cardcount = cardcount
+        self.cardcounts = cardcounts
+
+class Deck:
+    def __init__(self):
+        for suit in suits:
+            for rank in ranks:
+                shoe.append(Cards(symbols[suit], rank, values[rank], cardcounts[rank]))
+                random.shuffle(shoe)
+
+    def shuffle(self):
+        random.shuffle(shoe)
+
+    def __str__(self):
+        pass
+
+class Participant:
+    def __init__(self, name, hand, score):
+        self.name = name
+        self.hand = hand
+        self.score = score
+    
+    def stand(self):
+        pass
+
+    def hit(self):
+        card = random.choice(shoe)
+        shoe.pop(card)
+        hand.append(card)
+
+    def bust(self):
+        for card in hand:
+            hand.pop(card)
+
+class Dealer(Participant):
+    def __init__(self):
+        super().__init__('Dealer', hand, score)
+        self.name = "Dealer"
+
+class Player(Participant):
+    def __init__(self, name, hand, score):
+        super().__init__(name, hand, score, bankroll=0, bet=0)
+        1
+
+    def bet(self, amount):
+        self.bankroll -= amount
+        self.bet += amount
+
+    def pay(self):
+        self.bankroll += (self.bet * 2)
+        self.bet = 0
+
+    def split(self):
+        pass
+
+    def double(self):
+        self.bet = (self.bet * 2)
+        self.hit
+
+        self.stand
+
+    def surrender(self):
+        hand.pop([hand]) #discard hand
+        self.bankroll += (self.bet // 2)
+        self.bet = 0
+
+class Table: #is this needed?
+    def __init__(self, shoe, Dealer, *Player):
+        self.participant = Participant()
+        self.shoe = Deck()
+
+
+
+def setup():
+    #create number of player instances -max6- from input value
+    while len(hand) < 2:
+        card = random.choice(shoe) #card from shoe
+        shoe.pop(card)
+        hand.append(card)
+        Player.score += {values}[1]
+
+        #multiple aces in hand
+        #if the [count of Ace] in playerhand is > 1, then playerscore == 10 + [count of Ace] + other card values
+
+print('''
+1. Hit
+2. Stand
+3. Split
+4. Double
+5. Surrender
+6. Flip the Table 
+''')
+#action loop
+option = int(int_input("What would you like to do?"))
+while option != 6:
+    print(hand)
+    if len(hand) == 2:
+        int_input(option)
+        if option == 1:
+            print("You hit")
+            Participant.hit()
+            score += value
+            if score > 21:
+                print("You bust")
+                Participant.bust()
+                break
+            elif score == 21:
+                print("You have 21")
+                break
+            else:
+                if score < 21:
+                    score += value
+                    print(f"[hand], score")
+
+        elif option == 2:
+            print("You stand")
+            Participant.stand()
+
+        elif option == 3:
+            print("You split")
+            Player.split()
+
+        elif option == 4:
+            print("You double down")
+            Player.double()
+
+        elif option == 5:
+            print("You surrender")
+            Player.surrender()
+
+        elif option != 6:
+            print("Enter a valid number please")
+
+    print('''
+What would you like to do?
+1. Hit
+2. Stand
+3. Split
+4. Double
+5. Surrender
+6. Flip the Table 
+''')
+    option = int(int_input("What would you like to do?"))
+
+
+
+
+
+
 
 #deck - 52 cards - 6 decks - 312 cards in shoe
 
@@ -27,40 +186,11 @@ class Cards:
 #determine player count and hand count, add to active list and $bets$
 #deal cards (1 each until) 2 per hand and 2 for dealer- random draw from deck list/dictionary
 #hand totals
-def gameblackjack():
-    shoe = []
-    playerhand = []
-    dealerhand = []
-    runningcount = 0
-    truecount = runningcount / (Cards in shoe / 52)
-    playerscore = 0
-    dealerscore = 0
+
 
 #dealing opening hands
-    for suit in suits: #the Deck/Shoe
-        for face in faces:
-            shoe.append(Cards(suits_symbols[suit], face, values[face]))
-    
-    input("Welcome to the table folks. How many players today?")
-    #create number of player instances -max6- from input value
-    while len(playerhand) < 2:
-        #dealer hand
-        draw = random.choice(shoe) #card from shoe
-        playerhand.append(draw) #into hand
-        deck.remove(draw) #out of shoe
 
-        playerscore += draw.value
-        #multiple aces in hand
-        #if the [count of Ace] in playerhand is > 1, then playerscore == 10 + [count of Ace] + other card values
-
-        print hand and score
-
-        #dealer hand
-        draw = random.choice(shoe) #card from shoe
-        dealerhand.append(draw) #into hand
-        deck.remove(draw)
-
-        print(Dealer shows [dealerhand][0])
+        
         
 
 
@@ -73,23 +203,7 @@ def gameblackjack():
 
 #go to player 1 - action
 
-class Action:
-    def __init__(self):
 
-    def hit(Action):
-        def __init__(self):
-
-    def stay(Action):
-        def __init__(self):
-
-    def split(Action):
-        def __init__(self):
-
-    def double(Action):
-        def __init__(self):
-
-    def surrender(Action):
-        def __init__(self):
 
 
 #actions - input menu
