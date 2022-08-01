@@ -7,16 +7,8 @@ values = {'2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'Jack
 cardcounts = {'2':+1, '3':+1, '4':+1, '5':+1, '6':+1, '7':0, '8':0, '9':0, '10':-1, 'Jack':-1, 'Queen':-1, 'King':-1, 'Ace':-1}
 
 shoe = []
-hand = []
-score = 0
-
-def int_input(prompt):#check for invalid string inputs
-    while True:
-        try:
-            edgecase = int(input(prompt))
-            return edgecase
-        except ValueError as x:
-            print("Please enter a valid number.")
+#dealerhand = []
+#dealerscore = 0
 
 class Cards:
     def __init__(self, symbols, ranks, values, suits, cardcounts):
@@ -40,7 +32,7 @@ class Deck:
         pass
 
 class Participant:
-    def __init__(self, name, hand, score):
+    def __init__(self, name, hand=[], score=0):
         self.name = name
         self.hand = hand
         self.score = score
@@ -51,7 +43,7 @@ class Participant:
     def hit(self):
         card = random.choice(shoe)
         shoe.pop(card)
-        hand.append(card)
+        self.hand.append(card)
 
     def bust(self):
         for card in hand:
@@ -59,13 +51,15 @@ class Participant:
 
 class Dealer(Participant):
     def __init__(self):
-        super().__init__('Dealer', hand, score)
+        super().__init__('Dealer')
         self.name = "Dealer"
 
 class Player(Participant):
-    def __init__(self, name, hand, score):
-        super().__init__(name, hand, score, bankroll=0, bet=0)
-        1
+    def __init__(self, name, hand=[], score=0):
+        super().__init__(name, hand=[], score=0, bankroll=0, bet=0)
+        self.name = name
+        self.hand = hand
+        self.score = score
 
     def bet(self, amount):
         self.bankroll -= amount
@@ -80,24 +74,22 @@ class Player(Participant):
 
     def double(self):
         self.bet = (self.bet * 2)
-        self.hit
+        self.hit()
 
-        self.stand
+        self.stand()
 
     def surrender(self):
         hand.pop([hand]) #discard hand
         self.bankroll += (self.bet // 2)
         self.bet = 0
 
-class Table: #is this needed?
-    def __init__(self, shoe, Dealer, *Player):
-        self.participant = Participant()
-        self.shoe = Deck()
-
-
-
-def setup():
+def game():
+    shoe = []
     #create number of player instances -max6- from input value
+    player_name = input("ask name")
+    player1 = Participant(player_name, 300)
+
+
     while len(hand) < 2:
         card = random.choice(shoe) #card from shoe
         shoe.pop(card)
@@ -117,18 +109,18 @@ print('''
 ''')
 #action loop
 option = int(int_input("What would you like to do?"))
+#for loop for player in table somewhere
 while option != 6:
     print(hand)
     if len(hand) == 2:
         int_input(option)
         if option == 1:
             print("You hit")
-            Participant.hit()
+            player1.hit()
             score += value
             if score > 21:
                 print("You bust")
                 Participant.bust()
-                break
             elif score == 21:
                 print("You have 21")
                 break
@@ -147,14 +139,34 @@ while option != 6:
 
         elif option == 4:
             print("You double down")
-            Player.double()
+            player1.double()
 
         elif option == 5:
             print("You surrender")
-            Player.surrender()
+            player1.surrender()
 
         elif option != 6:
             print("Enter a valid number please")
+    else:
+        if len(hand) > 2:
+            if option == 1:
+                print("You hit")
+            Participant.hit()
+            score += value
+            if score > 21:
+                print("You bust")
+                Participant.bust()
+                break
+            elif score == 21:
+                print("You have 21")
+                break
+            else:
+                if score < 21:
+                    score += value
+                    print(f"[hand], score")
+                elif option == 2:
+                    print("You stand")
+                    Participant.stand()
 
     print('''
 What would you like to do?
@@ -168,7 +180,7 @@ What would you like to do?
     option = int(int_input("What would you like to do?"))
 
 
-
+game()
 
 
 
