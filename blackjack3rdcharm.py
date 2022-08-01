@@ -15,7 +15,7 @@ class Card:
 
     def __str__(self):
         return self.rank + " of " + self.suit
-#build the deck
+#build the deck -want to have 6 decks -312 cards
 class Deck:
     def __init__(self):
         self.deck = []
@@ -40,6 +40,10 @@ class Hand:
         self.value += values[card.rank]
         if card.rank == "Ace":
             self.aces += 1
+            while self.value > 21 and self.aces:
+                self.value -= 10
+                self.aces -= 1
+
 #checks for aces in hand to reduce if over 21
     def acecheck(self):
         while self.value > 21 and self.aces:
@@ -56,6 +60,12 @@ class Chips:
 
     def lose(self):
         self.total -= self.bet
+
+    def blackjack(self):
+        self.total += (self.bet * 1.5)
+
+    def surrender(self):
+        self.total -= (self.bet * .5)
 
 def placebet(chips):
 
@@ -78,12 +88,21 @@ def action(deck, hand):
     global playing
 
     while True:
-        option = input("Hit or Stand? (h or s)")
-
-        if option[0].lower() == 'h':
+        option = input("""
+1. Hit
+2. Stand
+3. Surrender
+        """)
+        while option not in {'1', '2', '3'}:
+            option = input("Try Again ")           
+        if option == '1':
             hit(deck, hand)
-        elif option[0].lower() == 's':
+            print("Player hits")
+        elif option == '2':
             print("Player stands")
+            playing = False
+        elif option == '3':
+            surrenderloss(player, dealhand, chipstack.total)
             playing = False
         else:
             print("Try again")
@@ -93,7 +112,7 @@ def action(deck, hand):
 def holecard(player, dealer):
     print("\nDealer's Hand:")
     print(" ????????????")
-    print('', dealer.cards[1])
+    print("Dealer is showing a", dealer.cards[0])
     print("\nPlayer's Hand:", *player.cards, sep='\n ')
     print("Player's Hand =", player.value)
 
@@ -119,40 +138,65 @@ def dealwin(player, dealer, chips):
     print("Dealer wins")
     chips.lose()
 
+def blackjackwin(player, dealer, chips):
+    print("BLACKJACK!!! YOU WIN")
+    chips.blackjack()
+
 def push(player, dealer):
     print("Push")
 
+def surrenderloss(player, dealer, chips):
+    print("You surrender your hand")
+    chips.surrender()
 
-print("Welcome")
+
+
+print("Welcome to the Golden Saucer. We only have Blackjack for now.")
+print("Change only $500.")
 deck = Deck()
 deck.shuffle()
-playchips = Chips()
+chipstack = Chips()
 
 while True:
+    #to shuffle a new deck if its below length "-type Deck has no length"
+    #if len(deck) < 40:
+    #   deck = Deck()
+    #   random.shuffle(deck)
+    #else:
+    #   continue
+    player = "Winger"
     playhand = Hand()
     playhand.draw(deck.deal())
     playhand.draw(deck.deal())
+    
 
     dealhand = Hand()
     dealhand.draw(deck.deal())
     dealhand.draw(deck.deal())
 
-    placebet(playchips)
+    placebet(chipstack)
     holecard(playhand, dealhand)
-
+#blackjack dealt
     if playhand.value == 21 and dealhand.value ==21:
         push(playhand, dealhand)
-
-    if playhand.value == 21 and dealhand.value != 21:
-        print("Blackjack!! You win")
-    
+        print("\nYour chip stack is at $", chipstack.total)
+        continue
+    elif playhand.value == 21 and dealhand.value != 21:
+        blackjackwin(playhand, dealhand, chipstack)
+        print("\nYour chip stack is at $", chipstack.total)
+        continue
+    elif dealhand.value == 21 and playhand.value != 21:
+        print("Dealer Blackjack. Sorry Friend.")
+        dealwin(playhand, dealhand, chipstack)
+        print("\nYour chip stack is at $", chipstack.total)
+        continue
 
     while playing:
         action(deck, playhand)
         holecard(playhand, dealhand)
 
         if playhand.value > 21:
-            playbust(playhand, dealhand, playchips)
+            playbust(playhand, dealhand, chipstack)
             break
 
     if playhand.value <= 21:
@@ -163,21 +207,36 @@ while True:
         holereaveled(playhand, dealhand)
 
         if dealhand.value > 21:
-            dealbust(playhand, dealhand, playchips)
+            dealbust(playhand, dealhand, chipstack)
         elif dealhand.value > playhand.value:
-            dealwin(playhand, dealhand, playchips)
+            dealwin(playhand, dealhand, chipstack)
         elif dealhand.value < playhand.value:
-            playwin(playhand, dealhand, playchips)
+            playwin(playhand, dealhand, chipstack)
         else:
             push(playhand, dealhand)
 
-    print("\nPlayer's winnings stand at", playchips.total)
+    print("\nYour chip stack is at $", chipstack.total)
 
-    new_game = input("Continue? y or n ")
+    pressyourluck = input("Keep playing? (y or n) ")
 
-    if new_game[0].lower()=='y':
+    while pressyourluck not in {'y', 'n'}:
+        print("Yes or no, its not hard")
+        pressyourluck = input("Focus this time. y or n ")
+        while pressyourluck not in {'y', 'n'}:
+            print("Are you fucking kidding me right now?")
+            pressyourluck = input("They are in caps now, can't miss it. Y or N ")    
+            if pressyourluck.lower() == 'y':
+                print("Well no shit huh")
+                playing = True
+                continue
+            elif pressyourluck.lower() == 'n':
+                print("So there is a God")
+                break
+    if pressyourluck.lower() == 'y':
+        print("Bringin' the heat")
         playing = True
         continue
-    else:
-        print("Come back soon")
+    elif pressyourluck.lower() == 'n':
+        print("Fine go, you stayed your hour")
         break
+        
